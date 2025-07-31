@@ -119,10 +119,38 @@ export const applyFilters = (reports: AccessibilityReport[], filters: FilterStat
   });
 };
 
+
+
+
 export const formatDate = (dateString: string, timezone: string): string => {
   const date = new Date(dateString);
+
+  const timezoneMap: Record<string, string> = {
+  'Local Time (Asia/Calcutta)': 'Asia/Kolkata',
+  'UTC': 'UTC',
+  'Pacific Time (US)': 'America/Los_Angeles',
+  'Eastern Time (US)': 'America/New_York',
+  'Central European Time': 'Europe/Berlin',
+  'Japan Standard Time': 'Asia/Tokyo',
+  'Australian Eastern Time': 'Australia/Sydney',
+  'Greenwich Mean Time': 'Etc/GMT',
+  'Singapore Time': 'Asia/Singapore',
+  'Dubai Time': 'Asia/Dubai',
+
+  // 🇨🇦 Canadian Zones
+  'Pacific Time (Canada)': 'America/Vancouver',
+  'Mountain Time (Canada)': 'America/Edmonton',
+  'Central Time (Canada)': 'America/Winnipeg',
+  'Eastern Time (Canada)': 'America/Toronto',
+  'Atlantic Time (Canada)': 'America/Halifax',
+  'Newfoundland Time': 'America/St_Johns',
+};
+
+
+  const resolvedTimeZone = timezoneMap[timezone] || 'UTC';
+
   return date.toLocaleString('en-US', {
-    timeZone: timezone === 'Local Time (Asia/Calcutta)' ? 'Asia/Kolkata' : 'UTC',
+    timeZone: resolvedTimeZone,
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',

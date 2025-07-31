@@ -7,6 +7,7 @@ import { FilterState, AccessibilityReport } from './types';
 import { applyFilters } from './utils/filters';
 // import { sampleReports } from './data/sampleData'; ← REMOVE
 import { fetchAccessibilityReports } from '../src/services/fetchAccessibilityReports'; // ✅ NEW
+import Loader from './components/Loader';
 
 const initialFilters: FilterState = {
   minScore: '',
@@ -100,6 +101,7 @@ function App() {
       </main>
 
       <Footer />
+      {/* <Loader/> */}
     </div>
   );
 }
