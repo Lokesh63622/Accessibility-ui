@@ -1,26 +1,36 @@
-import React, { useState } from 'react';
-import { AccessibilityReport } from '../types';
-import { formatDate } from '../utils/filters';
-import { ChevronUp, ChevronDown, ExternalLink } from 'lucide-react';
+import React, { useState } from "react";
+import { AccessibilityReport } from "../types";
+import { formatDate } from "../utils/filters";
+import { ChevronUp, ChevronDown, ExternalLink } from "lucide-react";
+
+import { downloadFile } from "../services/downloadService";
 
 interface DataTableProps {
   reports: AccessibilityReport[];
   timezone: string;
 }
 
-type SortField = 'url' | 'auditScore' | 'errorCount' | 'warningCount' | 'noticeCount' | 'wcagStandard' | 'createdOn';
-type SortDirection = 'asc' | 'desc';
+type SortField =
+  | "url"
+  | "auditScore"
+  | "errorCount"
+  | "warningCount"
+  | "noticeCount"
+  | "wcagStandard"
+  | "createdOn"
+  | "filePath";
+type SortDirection = "asc" | "desc";
 
 const DataTable: React.FC<DataTableProps> = ({ reports, timezone }) => {
-  const [sortField, setSortField] = useState<SortField>('createdOn');
-  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  const [sortField, setSortField] = useState<SortField>("createdOn");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
       setSortField(field);
-      setSortDirection('asc');
+      setSortDirection("asc");
     }
   };
 
@@ -28,26 +38,26 @@ const DataTable: React.FC<DataTableProps> = ({ reports, timezone }) => {
     let aValue: any = a[sortField];
     let bValue: any = b[sortField];
 
-    if (sortField === 'createdOn') {
+    if (sortField === "createdOn") {
       aValue = new Date(aValue);
       bValue = new Date(bValue);
     }
 
-    if (typeof aValue === 'string') {
+    if (typeof aValue === "string") {
       aValue = aValue.toLowerCase();
       bValue = bValue.toLowerCase();
     }
 
-    if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
-    if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+    if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+    if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
     return 0;
   });
 
   const getScoreColor = (score: number) => {
-    if (score >= 90) return 'text-green-600 border-green-200 bg-green-50';
-    if (score >= 80) return 'text-blue-600 border-blue-200 bg-blue-50';
-    if (score >= 70) return 'text-yellow-600 border-yellow-200 bg-yellow-50';
-    return 'text-red-600 border-red-200 bg-red-50';
+    if (score >= 90) return "text-green-600 border-green-200 bg-green-50";
+    if (score >= 80) return "text-blue-600 border-blue-200 bg-blue-50";
+    if (score >= 70) return "text-yellow-600 border-yellow-200 bg-yellow-50";
+    return "text-red-600 border-red-200 bg-red-50";
   };
 
   const CircularProgress: React.FC<{ score: number }> = ({ score }) => {
@@ -71,7 +81,15 @@ const DataTable: React.FC<DataTableProps> = ({ reports, timezone }) => {
             cx="20"
             cy="20"
             r={radius}
-            stroke={score >= 90 ? '#059669' : score >= 80 ? '#3b82f6' : score >= 70 ? '#d97706' : '#dc2626'}
+            stroke={
+              score >= 90
+                ? "#059669"
+                : score >= 80
+                ? "#3b82f6"
+                : score >= 70
+                ? "#d97706"
+                : "#dc2626"
+            }
             strokeWidth="3"
             fill="none"
             strokeDasharray={strokeDasharray}
@@ -91,15 +109,19 @@ const DataTable: React.FC<DataTableProps> = ({ reports, timezone }) => {
     if (sortField !== field) {
       return <ChevronUp className="w-4 h-4 text-gray-400" />;
     }
-    return sortDirection === 'asc' ? 
-      <ChevronUp className="w-4 h-4 text-orange-500" /> : 
-      <ChevronDown className="w-4 h-4 text-orange-500" />;
+    return sortDirection === "asc" ? (
+      <ChevronUp className="w-4 h-4 text-orange-500" />
+    ) : (
+      <ChevronDown className="w-4 h-4 text-orange-500" />
+    );
   };
 
   if (reports.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
-        <p className="text-gray-500 text-lg">No reports found matching the current filters.</p>
+        <p className="text-gray-500 text-lg">
+          No reports found matching the current filters.
+        </p>
       </div>
     );
   }
@@ -110,63 +132,63 @@ const DataTable: React.FC<DataTableProps> = ({ reports, timezone }) => {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th 
+              <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer  transition-colors"
-                onClick={() => handleSort('url')}
+                onClick={() => handleSort("url")}
               >
                 <div className="flex items-center space-x-1">
                   <span>URL</span>
                   <SortIcon field="url" />
                 </div>
               </th>
-              <th 
+              <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer  transition-colors"
-                onClick={() => handleSort('auditScore')}
+                onClick={() => handleSort("auditScore")}
               >
                 <div className="flex items-center space-x-1">
                   <span>Audit Score</span>
                   <SortIcon field="auditScore" />
                 </div>
               </th>
-              <th 
+              <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer  transition-colors"
-                onClick={() => handleSort('errorCount')}
+                onClick={() => handleSort("errorCount")}
               >
                 <div className="flex items-center space-x-1">
                   <span>Errors</span>
                   <SortIcon field="errorCount" />
                 </div>
               </th>
-              <th 
+              <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer  transition-colors"
-                onClick={() => handleSort('warningCount')}
+                onClick={() => handleSort("warningCount")}
               >
                 <div className="flex items-center space-x-1">
                   <span>Warnings</span>
                   <SortIcon field="warningCount" />
                 </div>
               </th>
-              <th 
+              <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer  transition-colors"
-                onClick={() => handleSort('noticeCount')}
+                onClick={() => handleSort("noticeCount")}
               >
                 <div className="flex items-center space-x-1">
                   <span>Notices</span>
                   <SortIcon field="noticeCount" />
                 </div>
               </th>
-              <th 
+              <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer  transition-colors"
-                onClick={() => handleSort('wcagStandard')}
+                onClick={() => handleSort("wcagStandard")}
               >
                 <div className="flex items-center space-x-1">
                   <span>Standard</span>
                   <SortIcon field="wcagStandard" />
                 </div>
               </th>
-              <th 
+              <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer  transition-colors"
-                onClick={() => handleSort('createdOn')}
+                onClick={() => handleSort("createdOn")}
               >
                 <div className="flex items-center space-x-1">
                   <span>Created On</span>
@@ -180,13 +202,17 @@ const DataTable: React.FC<DataTableProps> = ({ reports, timezone }) => {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {sortedReports.map((report) => (
-              <tr key={report.id} className="hover:bg-gray-50 transition-colors">
+              <tr
+                key={report.id}
+                className="hover:bg-gray-50 transition-colors"
+              >
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <a 
-                    href={report.url} 
-                    target="_blank" 
+                  <a
+                    href={report.url}
+                    target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-800 hover:underline font-medium"
+                    className="text-blue-600 hover:text-blue-800 hover:underline font-medium max-w-[200px] block truncate"
+                    title={report.url}
                   >
                     {report.url}
                   </a>
@@ -210,13 +236,18 @@ const DataTable: React.FC<DataTableProps> = ({ reports, timezone }) => {
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="text-sm font-medium text-gray-900">{report.wcagStandard}</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {report.wcagStandard}
+                  </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {formatDate(report.createdOn, timezone)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <button className="text-blue-600 hover:text-blue-800 transition-colors">
+                  <button
+                    className="text-blue-600 hover:text-blue-800 transition-colors"
+                    onClick={() => downloadFile(report.filePath)}
+                  >
                     <ExternalLink className="w-4 h-4" />
                   </button>
                 </td>

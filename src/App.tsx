@@ -5,7 +5,8 @@ import DataTable from './components/DataTable';
 import Footer from './components/Footer';
 import { FilterState, AccessibilityReport } from './types';
 import { applyFilters } from './utils/filters';
-import { sampleReports } from './data/sampleData';
+// import { sampleReports } from './data/sampleData'; ← REMOVE
+import { fetchAccessibilityReports } from '../src/services/fetchAccessibilityReports'; // ✅ NEW
 
 const initialFilters: FilterState = {
   minScore: '',
@@ -24,12 +25,26 @@ const initialFilters: FilterState = {
 
 function App() {
   const [filters, setFilters] = useState<FilterState>(initialFilters);
-  const [filteredReports, setFilteredReports] = useState<AccessibilityReport[]>(sampleReports);
+  const [allReports, setAllReports] = useState<AccessibilityReport[]>([]);
+  const [filteredReports, setFilteredReports] = useState<AccessibilityReport[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const filtered = applyFilters(sampleReports, filters);
+    async function loadReports() {
+      setLoading(true);
+      const data = await fetchAccessibilityReports();
+      console.log("scdnvdc",data);
+      setAllReports(data);
+      setFilteredReports(applyFilters(data, filters));
+      setLoading(false);
+    }
+    loadReports();
+  }, []);
+
+  useEffect(() => {
+    const filtered = applyFilters(allReports, filters);
     setFilteredReports(filtered);
-  }, [filters]);
+  }, [filters, allReports]);
 
   const handleFilterChange = (key: keyof FilterState, value: string) => {
     setFilters(prev => ({
@@ -66,7 +81,7 @@ function App() {
           <div className="flex items-center justify-between">
             <p className="text-sm text-gray-600">
               Showing <span className="font-semibold">{filteredReports.length}</span> of{' '}
-              <span className="font-semibold">{sampleReports.length}</span> reports
+              <span className="font-semibold">{allReports.length}</span> reports
             </p>
             <div className="text-sm text-gray-500">
               Timezone: {filters.timezone}
@@ -74,10 +89,14 @@ function App() {
           </div>
         </div>
 
-        <DataTable 
-          reports={filteredReports} 
-          timezone={filters.timezone}
-        />
+        {loading ? (
+          <p className="text-center text-gray-500">Loading reports...</p>
+        ) : (
+          <DataTable 
+            reports={filteredReports} 
+            timezone={filters.timezone}
+          />
+        )}
       </main>
 
       <Footer />

@@ -8,6 +8,7 @@ export interface AccessibilityReport {
   warningCount: number;
   noticeCount: number;
   createdOn: string;
+  filePath:string;
 }
 
 export interface FilterState {
