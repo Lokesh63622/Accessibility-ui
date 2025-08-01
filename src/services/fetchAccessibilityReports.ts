@@ -7,13 +7,13 @@ const API_URL = 'https://dev2.fireflink.com/executionresult/optimize/v3/accessib
 const AUTH_TOKEN = import.meta.env.VITE_ACCESS_TOKEN;
 
 export async function fetchAccessibilityReports(
-   pageNumber: number,  // ← removed default value
-  pageSize: number
+  pageNumber: number,
+  pageSize: number,
+  searchUrl?: string
 ): Promise<AccessibilityReport[]> {
-  
   try {
-      console.log("check pramms",pageNumber,
-        pageSize,)
+    console.log("check params", pageNumber, pageSize, searchUrl);
+
     const response = await axios.get(API_URL, {
       headers: {
         Authorization: `Bearer ${AUTH_TOKEN}`,
@@ -21,9 +21,9 @@ export async function fetchAccessibilityReports(
       params: {
         pageNumber,
         pageSize,
+        ...(searchUrl ? { url: searchUrl } : {})  // Add `url` param only if provided
       },
     });
-
 
     const data = response.data.responseObject;
 
@@ -38,4 +38,3 @@ export async function fetchAccessibilityReports(
     return [];
   }
 }
-
