@@ -4,19 +4,8 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-gray-900 text-white mt-12">
       <div className="max-w-7xl mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-10">
-          <div>
-            <div className="flex items-center space-x-3 mb-6">
-                       <img
-          src="https://www.testyantraglobal.com/images/logo.svg"
-          alt="Test Yantra Logo"
-          className="h-10"
-        />
-            </div>
-          </div>
-        </div>
 
-        <div className="border-t border-gray-800 pt-8 mt-8">
+        <div className="border-t border-gray-800 ">
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
             <h5 className="text-yellow-800 font-semibold mb-2">⚠️ Important Disclaimer</h5>
             <p className="text-yellow-700 text-sm leading-relaxed">

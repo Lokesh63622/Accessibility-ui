@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, RefObject } from "react";
 import { AccessibilityReport } from "../types";
 import { formatDate } from "../utils/filters";
 import { ChevronUp, ChevronDown, ExternalLink } from "lucide-react";
-
 import { downloadFile } from "../services/downloadService";
 
 interface DataTableProps {
   reports: AccessibilityReport[];
   timezone: string;
+  loadMoreRef?: RefObject<HTMLDivElement>;
 }
 
 type SortField =
@@ -21,7 +21,7 @@ type SortField =
   | "filePath";
 type SortDirection = "asc" | "desc";
 
-const DataTable: React.FC<DataTableProps> = ({ reports, timezone }) => {
+const DataTable: React.FC<DataTableProps> = ({ reports, timezone, loadMoreRef }) => {
   const [sortField, setSortField] = useState<SortField>("createdOn");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
@@ -132,69 +132,26 @@ const DataTable: React.FC<DataTableProps> = ({ reports, timezone }) => {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer  transition-colors"
-                onClick={() => handleSort("url")}
-              >
-                <div className="flex items-center space-x-1">
-                  <span>URL</span>
-                  <SortIcon field="url" />
-                </div>
-              </th>
-              <th
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer  transition-colors"
-                onClick={() => handleSort("auditScore")}
-              >
-                <div className="flex items-center space-x-1">
-                  <span>Audit Score</span>
-                  <SortIcon field="auditScore" />
-                </div>
-              </th>
-              <th
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer  transition-colors"
-                onClick={() => handleSort("errorCount")}
-              >
-                <div className="flex items-center space-x-1">
-                  <span>Errors</span>
-                  <SortIcon field="errorCount" />
-                </div>
-              </th>
-              <th
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer  transition-colors"
-                onClick={() => handleSort("warningCount")}
-              >
-                <div className="flex items-center space-x-1">
-                  <span>Warnings</span>
-                  <SortIcon field="warningCount" />
-                </div>
-              </th>
-              <th
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer  transition-colors"
-                onClick={() => handleSort("noticeCount")}
-              >
-                <div className="flex items-center space-x-1">
-                  <span>Notices</span>
-                  <SortIcon field="noticeCount" />
-                </div>
-              </th>
-              <th
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer  transition-colors"
-                onClick={() => handleSort("wcagStandard")}
-              >
-                <div className="flex items-center space-x-1">
-                  <span>Standard</span>
-                  <SortIcon field="wcagStandard" />
-                </div>
-              </th>
-              <th
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer  transition-colors"
-                onClick={() => handleSort("createdOn")}
-              >
-                <div className="flex items-center space-x-1">
-                  <span>Created On</span>
-                  <SortIcon field="createdOn" />
-                </div>
-              </th>
+              {[
+                { label: "URL", field: "url" },
+                { label: "Audit Score", field: "auditScore" },
+                { label: "Errors", field: "errorCount" },
+                { label: "Warnings", field: "warningCount" },
+                { label: "Notices", field: "noticeCount" },
+                { label: "Standard", field: "wcagStandard" },
+                { label: "Created On", field: "createdOn" },
+              ].map(({ label, field }) => (
+                <th
+                  key={field}
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer transition-colors"
+                  onClick={() => handleSort(field as SortField)}
+                >
+                  <div className="flex items-center space-x-1">
+                    <span>{label}</span>
+                    <SortIcon field={field as SortField} />
+                  </div>
+                </th>
+              ))}
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Action
               </th>
@@ -202,10 +159,7 @@ const DataTable: React.FC<DataTableProps> = ({ reports, timezone }) => {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {sortedReports.map((report) => (
-              <tr
-                key={report.id}
-                className="hover:bg-gray-50 transition-colors"
-              >
+              <tr key={report.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <a
                     href={report.url}
@@ -245,7 +199,7 @@ const DataTable: React.FC<DataTableProps> = ({ reports, timezone }) => {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <button
-                  title="View and download the report"
+                    title="View and download the report"
                     className="text-blue-600 hover:text-blue-800 transition-colors"
                     onClick={() => downloadFile(report.filePath)}
                   >
@@ -257,6 +211,9 @@ const DataTable: React.FC<DataTableProps> = ({ reports, timezone }) => {
           </tbody>
         </table>
       </div>
+
+      {/* 👇 Trigger element for infinite scroll */}
+      {loadMoreRef && <div ref={loadMoreRef} className="h-8" />}
     </div>
   );
 };

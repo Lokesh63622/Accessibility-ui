@@ -3,12 +3,12 @@
 import axios from 'axios';
 import { AccessibilityReport } from '../types';
 
-const API_URL = 'https://dev2.fireflink.com/executionresult/optimize/v3/accessibility/all-filtered?pageNumber=0&pageSize=10';
+const API_URL = 'https://dev2.fireflink.com/executionresult/optimize/v3/accessibility/all-filtered';
 const AUTH_TOKEN = import.meta.env.VITE_ACCESS_TOKEN;
 
 export async function fetchAccessibilityReports(
-  pageNumber: 1,
-  pageSize: 15
+   pageNumber: number,  // ← removed default value
+  pageSize: number
 ): Promise<AccessibilityReport[]> {
   
   try {
