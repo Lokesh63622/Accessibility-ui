@@ -3,7 +3,7 @@
 import axios from 'axios';
 import { AccessibilityReport } from '../types';
 
-const API_URL = 'https://dev2.fireflink.com/executionresult/optimize/v3/accessibility/all-filtered?pageNumber=0&pageSize=15';
+const API_URL = 'https://dev2.fireflink.com/executionresult/optimize/v3/accessibility/all-filtered?pageNumber=0&pageSize=10';
 const AUTH_TOKEN = import.meta.env.VITE_ACCESS_TOKEN;
 
 export async function fetchAccessibilityReports(

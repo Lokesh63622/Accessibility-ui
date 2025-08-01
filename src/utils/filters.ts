@@ -8,9 +8,26 @@ export const applyFilters = (reports: AccessibilityReport[], filters: FilterStat
     }
 
     // Min Score filter
-    if (filters.minScore && report.auditScore < parseInt(filters.minScore)) {
-      return false;
-    }
+  if (filters.minScore && filters.minScore !== 'All') {
+  const score = report.auditScore;
+  switch (filters.minScore) {
+    case '0-20':
+      if (score < 0 || score > 20) return false;
+      break;
+    case '21-40':
+      if (score < 21 || score > 40) return false;
+      break;
+    case '41-60':
+      if (score < 41 || score > 60) return false;
+      break;
+    case '61-80':
+      if (score < 61 || score > 80) return false;
+      break;
+    case '81-100':
+      if (score < 81 || score > 100) return false;
+      break;
+  }
+}
 
     // Error range filter
     if (filters.errorRange && filters.errorRange !== 'All') {

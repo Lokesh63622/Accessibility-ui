@@ -245,6 +245,7 @@ const DataTable: React.FC<DataTableProps> = ({ reports, timezone }) => {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <button
+                  title="View and download the report"
                     className="text-blue-600 hover:text-blue-800 transition-colors"
                     onClick={() => downloadFile(report.filePath)}
                   >
