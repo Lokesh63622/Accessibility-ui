@@ -23,15 +23,6 @@ const Footer: React.FC = () => {
               handling policies.
             </p>
           </div>
-
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 text-sm">
-              © 2024 TestYantra Global. All rights reserved.
-            </p>
-            <p className="text-gray-400 text-sm mt-2 md:mt-0">
-              Firelink Accessibility Report System v2.1.0
-            </p>
-          </div>
         </div>
       </div>
     </footer>

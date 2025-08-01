@@ -2,10 +2,6 @@ import { AccessibilityReport, FilterState } from '../types';
 
 export const applyFilters = (reports: AccessibilityReport[], filters: FilterState): AccessibilityReport[] => {
   return reports.filter(report => {
-    // URL search filter
-    if (filters.searchUrl && !report.url.toLowerCase().includes(filters.searchUrl.toLowerCase())) {
-      return false;
-    }
 
     // Min Score filter
   if (filters.minScore && filters.minScore !== 'All') {
