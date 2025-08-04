@@ -2,12 +2,37 @@ import React from "react";
 import { FilterState } from "../types";
 import { Calendar, Search, ChevronDown, FilterIcon } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
+import { Input, Select, DatePicker, Button } from "pixel-react";
 
 interface FiltersProps {
   filters: FilterState;
   onFilterChange: (key: keyof FilterState, value: string) => void;
   onResetFilters: () => void;
 }
+
+const scoreOptions = [
+  { name: "All", value: "All" },
+  { name: "0–20", value: "0-20" },
+  { name: "21–40", value: "21-40" },
+  { name: "41–60", value: "41-60" },
+  { name: "61–80", value: "61-80" },
+  { name: "81–100", value: "81-100" },
+];
+
+const rangeOptions = [
+  { name: "All", value: "All" },
+  { name: "0–50", value: "0-50" },
+  { name: "50–100", value: "50-100" },
+  { name: "100–150", value: "100-150" },
+  { name: "150+", value: "150+" },
+];
+
+const standardOptions = [
+  { name: "All", value: "All" },
+  { name: "WCAG2A", value: "WCAG2A" },
+  { name: "WCAG2AA", value: "WCAG2AA" },
+  { name: "WCAG2AAA", value: "WCAG2AAA" },
+];
 
 const Filters: React.FC<FiltersProps> = ({
   filters,
@@ -32,147 +57,111 @@ const Filters: React.FC<FiltersProps> = ({
 
           <Disclosure.Panel className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4">
-              {/* Search URL */}
-              <div>
-                <label className="flex items-center text-sm font-medium text-gray-700 mb-1">
-                  <Search className="w-4 h-4 mr-1" />
-                  Search by URL
-                </label>
-                <input
-                  type="text"
-                  placeholder="Enter URL"
-                  value={filters.searchUrl}
-                  onChange={(e) => onFilterChange("searchUrl", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                />
-              </div>
+              {/* Search by URL */}
+              <Input
+                type="text"
+                label="Search by URL"
+                placeholder="Enter URL"
+                value={filters.searchUrl}
+                icon={<Search className="w-4 h-4 text-gray-400" />}
+                onChange={(e) =>
+                  onFilterChange("searchUrl", e.target.value)
+                }
+              />
 
-              {/* Audit Score */}
-              <div>
-                <label className="text-sm font-medium text-gray-700 mb-1 block">
-                  Audit Score Range
-                </label>
-                <select
-                  value={filters.minScore}
-                  onChange={(e) => onFilterChange("minScore", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                >
-                  <option value="All">All</option>
-                  <option value="0-20">0–20</option>
-                  <option value="21-40">21–40</option>
-                  <option value="41-60">41–60</option>
-                  <option value="61-80">61–80</option>
-                  <option value="81-100">81–100</option>
-                </select>
-              </div>
+              {/* Audit Score Range */}
+              <Select
+                label="Audit Score Range"
+                optionsList={scoreOptions}
+                labelAccessor="name"
+                valueAccessor="value"
+                selectedOption={scoreOptions.find(
+                  (opt) => opt.value === filters.minScore
+                )}
+                onChange={(val) =>
+                  onFilterChange("minScore", val?.value || "All")
+                }
+              />
 
               {/* Standard */}
-              <div>
-                <label className="text-sm font-medium text-gray-700 mb-1 block">
-                  Standard
-                </label>
-                <select
-                  value={filters.standard}
-                  onChange={(e) => onFilterChange("standard", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                >
-                  <option value="All">All</option>
-                  <option value="WCAG2A">WCAG2A</option>
-                  <option value="WCAG2AA">WCAG2AA</option>
-                  <option value="WCAG2AAA">WCAG2AAA</option>
-                </select>
-              </div>
+              <Select
+                label="Standard"
+                optionsList={standardOptions}
+                labelAccessor="name"
+                valueAccessor="value"
+                selectedOption={standardOptions.find(
+                  (opt) => opt.value === filters.standard
+                )}
+                onChange={(val) =>
+                  onFilterChange("standard", val?.value || "All")
+                }
+              />
 
-              {/* Errors */}
-              <div>
-                <label className="text-sm font-medium text-gray-700 mb-1 block">
-                  Errors Range
-                </label>
-                <select
-                  value={filters.errorRange}
-                  onChange={(e) => onFilterChange("errorRange", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                >
-                  <option value="All">All</option>
-                  <option value="0-50">0–50</option>
-                  <option value="50-100">50–100</option>
-                  <option value="100-150">100–150</option>
-                  <option value="150+">150+</option>
-                </select>
-              </div>
+              {/* Error Range */}
+              <Select
+                label="Errors Range"
+                optionsList={rangeOptions}
+                labelAccessor="name"
+                valueAccessor="value"
+                selectedOption={rangeOptions.find(
+                  (opt) => opt.value === filters.errorRange
+                )}
+                onChange={(val) =>
+                  onFilterChange("errorRange", val?.value || "All")
+                }
+              />
 
-              {/* Warnings */}
-              <div>
-                <label className="text-sm font-medium text-gray-700 mb-1 block">
-                  Warnings Range
-                </label>
-                <select
-                  value={filters.warningRange}
-                  onChange={(e) => onFilterChange("warningRange", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                >
-                  <option value="All">All</option>
-                  <option value="0-50">0–50</option>
-                  <option value="50-100">50–100</option>
-                  <option value="100-150">100–150</option>
-                  <option value="150+">150+</option>
-                </select>
-              </div>
+              {/* Warning Range */}
+              <Select
+                label="Warnings Range"
+                optionsList={rangeOptions}
+                labelAccessor="name"
+                valueAccessor="value"
+                selectedOption={rangeOptions.find(
+                  (opt) => opt.value === filters.warningRange
+                )}
+                onChange={(val) =>
+                  onFilterChange("warningRange", val?.value || "All")
+                }
+              />
 
-              {/* Notices */}
-              <div>
-                <label className="text-sm font-medium text-gray-700 mb-1 block">
-                  Notices Range
-                </label>
-                <select
-                  value={filters.noticeRange}
-                  onChange={(e) => onFilterChange("noticeRange", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                >
-                  <option value="All">All</option>
-                  <option value="0-50">0–50</option>
-                  <option value="50-100">50–100</option>
-                  <option value="100-150">100–150</option>
-                  <option value="150+">150+</option>
-                </select>
-              </div>
+              {/* Notice Range */}
+              <Select
+                label="Notices Range"
+                optionsList={rangeOptions}
+                labelAccessor="name"
+                valueAccessor="value"
+                selectedOption={rangeOptions.find(
+                  (opt) => opt.value === filters.noticeRange
+                )}
+                onChange={(val) =>
+                  onFilterChange("noticeRange", val?.value || "All")
+                }
+              />
 
               {/* Date From */}
-              <div>
-                <label className="flex items-center text-sm font-medium text-gray-700 mb-1">
-                  <Calendar className="w-4 h-4 mr-1" />
-                  Date From
-                </label>
-                <input
-                  type="date"
-                  value={filters.dateFrom}
-                  onChange={(e) => onFilterChange("dateFrom", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                />
-              </div>
+              <DatePicker
+                label="Date From"
+                value={filters.dateFrom}
+                onChange={(dateStr) =>
+                  onFilterChange("dateFrom", dateStr || "")
+                }
+              />
 
               {/* Date To */}
-              <div>
-                <label className="flex items-center text-sm font-medium text-gray-700 mb-1">
-                  <Calendar className="w-4 h-4 mr-1" />
-                  Date To
-                </label>
-                <input
-                  type="date"
-                  value={filters.dateTo}
-                  onChange={(e) => onFilterChange("dateTo", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                />
-              </div>
+              <DatePicker
+                label="Date To"
+                value={filters.dateTo}
+                onChange={(dateStr) =>
+                  onFilterChange("dateTo", dateStr || "")
+                }
+              />
 
               {/* Reset Button */}
               <div className="col-span-full flex justify-end mt-2">
-                <button
-                  onClick={onResetFilters}
-                  className="bg-orange-500 text-white px-6 py-2 rounded-md hover:bg-orange-600"
-                >
+                <Button variant="primary" onClick={onResetFilters}>
                   Reset Filters
-                </button>
+                </Button>
               </div>
             </div>
           </Disclosure.Panel>
